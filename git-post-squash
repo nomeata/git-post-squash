@@ -1,0 +1,45 @@
+#!/usr/bin/env python2
+
+import argparse
+import subprocess
+import sys
+
+def run(branch):
+    # find all tree on this branch that are not on the other branch
+
+    trees = {}
+
+    proc = subprocess.Popen(["git", "log", "--format=%H %T", "^" + branch, "HEAD"], stdout=subprocess.PIPE)
+    for line in proc.stdout.readlines():
+        [commit, tree] = line.split();
+        trees[tree] = commit
+
+    # go through commit on other side, find first matching commit
+
+    proc = subprocess.Popen(["git", "log", "--format=%H %T", branch, "^HEAD"], stdout=subprocess.PIPE)
+    for line in proc.stdout.readlines():
+        [commit, tree] = line.split();
+        if tree in trees:
+            msg='''\
+Post-squash merge of %s
+
+Commit %s on %s has the same tree as
+commit %s.
+''' % (branch, commit[:7], branch, trees[tree][:7])
+            subprocess.check_call(["git", "merge", "-s", "ours", commit, "-m", msg])
+            sys.exit(0)
+
+    print("Could not find a suitable squash merge commit on %s." % branch)
+    sys.exit(1)
+
+def main():
+    parser = argparse.ArgumentParser(
+            description='Post-squash merge command')
+    #parser.add_argument('--version', action='version', version=VERSION)
+    parser.add_argument("branch", help="Branch that contains the squash-merge commit (usually master)")
+    args = parser.parse_args()
+
+    run(args.branch)
+
+if __name__ == '__main__':
+  main()
