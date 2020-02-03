@@ -36,14 +36,14 @@ to check on your CI infrastructure that this merge does not break the build):
 
 and now you do a squash merge (or use Github’s green “Squash merge” button, or
 mergify.io’s squash merge action). The result is a new commit `M5` on `master`
-that contains all the canges from `featureA`:
+that contains all the changes from `featureA`:
 
     M1 ─ M2 ─────────── M3 ────── M4 ─ M5       (master)
            ╲              ╲         ╲
             A1 ─ A2 ─ A3 ─ A4 ─ A5 ─ A6         (featureA)
 
 Note that there is no line from `A6` to `M5`. This means that the git history
-of `master` is clean, and does not contian the usually boring and unhelpful
+of `master` is clean, and does not contain the usually boring and unhelpful
 history of how `featureA` came to be; no “fix typo” commits, no “merge master
 into featureA” commit.
 
@@ -55,7 +55,7 @@ building off featureA:
 What is the problem with squash merge?
 --------------------------------------
 
-Consider the situation above, but add `featureB` to the mix, a feautre branch that was created off `featureA`:
+Consider the situation above, but add `featureB` to the mix, a feature branch that was created off `featureA`:
 
 
     M1 ─ M2 ─────────── M3 ────── M4 ── M5      (master)
@@ -119,23 +119,23 @@ which will do `git merge -s ours`, but it will
  * double-check that nothing is lost.
 
 It does so by picking the latest commit on `master` that _has the same tree_ as
-some commit on the current brancht that is not yet on `master`.
+some commit on the current branch that is not yet on `master`.
 
 In the example above, it would pick `M5` because it has the same tree as `A6`,
 which is a commit that exists on `featureB`, but not on `master`.
 
 
-Conctact
+Contact
 --------
 
-Please reports bugs and missing features at the [GitHub bugtracker]. This is
+Please reports bugs and missing features at the [GitHub bug tracker]. This is
 also where you can find the [source code].
 
 
 `git-post-squash` was written by [Joachim Breitner] and is licensed under a
 permissive MIT [license].
 
-[GitHub bugtracker]: https://github.com/nomeata/git-post-squash/issues
+[GitHub bug tracker]: https://github.com/nomeata/git-post-squash/issues
 [source code]: https://github.com/nomeata/git-post-squash
 [Joachim Breitner]: http://www.joachim-breitner.de/
 [license]: https://github.com/nomeata/git-post-squash/blob/LICENSE
