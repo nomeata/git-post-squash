@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import argparse
 import subprocess
@@ -11,25 +11,25 @@ def run(branch):
 
     proc = subprocess.Popen(["git", "log", "--format=%H %T", "^" + branch, "HEAD"], stdout=subprocess.PIPE)
     for line in proc.stdout.readlines():
-        [commit, tree] = line.split();
+        [commit, tree] = line.split()
         trees[tree] = commit
 
     # go through commit on other side, find first matching commit
 
     proc = subprocess.Popen(["git", "log", "--format=%H %T", branch, "^HEAD"], stdout=subprocess.PIPE)
     for line in proc.stdout.readlines():
-        [commit, tree] = line.split();
+        [commit, tree] = line.split()
         if tree in trees:
-            msg='''\
-Post-squash merge of %s
+            msg=f'''\
+Post-squash merge of {branch}
 
-Commit %s on %s has the same tree as
-commit %s.
-''' % (branch, commit[:7], branch, trees[tree][:7])
+Commit {commit[:7]} on {branch} has the same tree as
+commit {trees[tree][:7]}.
+'''
             subprocess.check_call(["git", "merge", "-s", "ours", commit, "-m", msg])
             sys.exit(0)
 
-    print("Could not find a suitable squash merge commit on %s." % branch)
+    print(f"Could not find a suitable squash merge commit on {branch}.")
     sys.exit(1)
 
 def main():
